@@ -3668,7 +3668,7 @@
     if (me.boost) armed.push(t('boostOn', { n: POWERS.boost.steps }));
     if (me.loaded) armed.push(t('nextRoll', { n: me.loaded }));
     if (armedThisTurn.freeze !== null) armed.push(t('frozenOn', { name: state.players[armedThisTurn.freeze].name }));
-    $('powers-status').textContent = armed.join(' · ');
+    $('powers-status').textContent = armed.length ? armed.join(' · ') : t('powersHint');
 
     if (!$('powers-modal').classList.contains('hidden')) renderPowerSheet();
   }

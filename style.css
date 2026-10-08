@@ -156,6 +156,31 @@
   --cell-alt-bg: linear-gradient(160deg, #fdeff1, #fbe7ec);
   --cell-border: rgba(240, 219, 227, 0.7);
   --cell-ink: #8a7681;
+
+  /* Scene light and shade: the colours of the glints, sun shafts, flares and
+     shadows drawn over the board and page. Lifted out of the rules so every
+     colour in the file comes from a token. Used with color-mix() for alpha. */
+  --fx-083a44: #083a44;
+  --fx-1e2a16: #1e2a16;
+  --fx-223418: #223418;
+  --fx-black: #000000;
+  --fx-c8d7ff: #c8d7ff;
+  --fx-dce4ff: #dce4ff;
+  --fx-dce6ff: #dce6ff;
+  --fx-ffbe82: #ffbe82;
+  --fx-ffbece: #ffbece;
+  --fx-ffd66e: #ffd66e;
+  --fx-ffd6aa: #ffd6aa;
+  --fx-ffd6c4: #ffd6c4;
+  --fx-ffdcb4: #ffdcb4;
+  --fx-ffe2aa: #ffe2aa;
+  --fx-ffecaa: #ffecaa;
+  --fx-ffecd2: #ffecd2;
+  --fx-ffecdc: #ffecdc;
+  --fx-fff4d6: #fff4d6;
+  --fx-fff6cd: #fff6cd;
+  --fx-fffaf0: #fffaf0;
+  --fx-white: #ffffff;
 }
 
 /* Night is the one dark scene. White frost over near-black goes flat grey —
@@ -545,7 +570,8 @@ button {
 }
 
 .player-row input::placeholder {
-  color: var(--color-muted);
+  color: var(--color-ink-2);
+  opacity: 1;
 }
 
 .player-row input:focus {
@@ -951,6 +977,27 @@ button {
   background: transparent;
 }
 
+@media (min-width: 900px) and (hover: hover) {
+  .header-tools .icon-btn:not(a) {
+    width: auto;
+    gap: var(--space-2xs);
+    padding: 0 var(--space-sm) 0 var(--space-xs);
+  }
+
+  .header-tools .icon-btn:not(a)::after {
+    content: attr(aria-label);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  /* The language button already carries its own two-letter label. */
+  .header-tools .icon-btn.lang-btn::after {
+    content: none;
+  }
+}
+
 .scores {
   display: flex;
   flex-wrap: wrap;
@@ -1122,10 +1169,12 @@ button {
   position: relative;
   z-index: 2;
   padding: 2px 3px;
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--cell-ink);
-  opacity: 0.7;
+  /* Mixed toward the ink so the number reads on the tile in every scene; the
+     scene tint alone sat near 2:1. Ink flips on the dark scene, so this works
+     there too. */
+  color: color-mix(in oklch, var(--cell-ink) 38%, var(--color-ink));
 }
 
 /* The scene's own motifs scattered over the empty cells. Corner, size and tilt
@@ -1314,8 +1363,8 @@ button {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 60%, rgb(255 214 110 / 0.55), transparent 70%),
-    conic-gradient(from 0deg, transparent, rgb(255 236 170 / 0.35), transparent 30%, rgb(255 236 170 / 0.3), transparent 60%);
+    radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--fx-ffd66e) 55%, transparent), transparent 70%),
+    conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--fx-ffecaa) 35%, transparent), transparent 30%, color-mix(in srgb, var(--fx-ffecaa) 30%, transparent), transparent 60%);
   animation: finishShimmer 3.6s ease-in-out infinite alternate;
   pointer-events: none;
 }
@@ -1337,8 +1386,8 @@ button {
   background: linear-gradient(
     115deg,
     transparent 40%,
-    rgb(255 255 255 / 0.2) 47%,
-    rgb(255 255 255 / 0.05) 52%,
+    color-mix(in srgb, var(--fx-white) 20%, transparent) 47%,
+    color-mix(in srgb, var(--fx-white) 5%, transparent) 52%,
     transparent 58%
   );
   transform: translateX(-60%);
@@ -1370,11 +1419,11 @@ button {
   aspect-ratio: 1;
   opacity: 0;
   background:
-    linear-gradient(transparent 46%, rgb(255 255 255 / 0.9) 46% 54%, transparent 54%),
-    linear-gradient(90deg, transparent 46%, rgb(255 255 255 / 0.9) 46% 54%, transparent 54%),
-    radial-gradient(circle, rgb(255 255 255 / 0.95) 0 10%, rgb(255 255 255 / 0.35) 22%, transparent 60%);
-  -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%);
-  mask: radial-gradient(circle, #000 20%, transparent 70%);
+    linear-gradient(transparent 46%, color-mix(in srgb, var(--fx-white) 90%, transparent) 46% 54%, transparent 54%),
+    linear-gradient(90deg, transparent 46%, color-mix(in srgb, var(--fx-white) 90%, transparent) 46% 54%, transparent 54%),
+    radial-gradient(circle, color-mix(in srgb, var(--fx-white) 95%, transparent) 0 10%, color-mix(in srgb, var(--fx-white) 35%, transparent) 22%, transparent 60%);
+  -webkit-mask: radial-gradient(circle, var(--fx-black) 20%, transparent 70%);
+  mask: radial-gradient(circle, var(--fx-black) 20%, transparent 70%);
   will-change: transform, opacity;
 }
 
@@ -1545,18 +1594,18 @@ button {
   width: var(--size, 6px);
   height: var(--size, 6px);
   background:
-    linear-gradient(transparent 44%, rgb(255 255 255 / 0.95) 44% 56%, transparent 56%),
-    linear-gradient(90deg, transparent 44%, rgb(255 255 255 / 0.95) 44% 56%, transparent 56%),
-    radial-gradient(circle, #fff 0 14%, rgb(220 228 255 / 0.5) 26%, transparent 62%);
-  -webkit-mask: radial-gradient(circle, #000 25%, transparent 70%);
-  mask: radial-gradient(circle, #000 25%, transparent 70%);
+    linear-gradient(transparent 44%, color-mix(in srgb, var(--fx-white) 95%, transparent) 44% 56%, transparent 56%),
+    linear-gradient(90deg, transparent 44%, color-mix(in srgb, var(--fx-white) 95%, transparent) 44% 56%, transparent 56%),
+    radial-gradient(circle, var(--fx-white) 0 14%, color-mix(in srgb, var(--fx-dce4ff) 50%, transparent) 26%, transparent 62%);
+  -webkit-mask: radial-gradient(circle, var(--fx-black) 25%, transparent 70%);
+  mask: radial-gradient(circle, var(--fx-black) 25%, transparent 70%);
 }
 
 .ev-glint {
   background:
-    linear-gradient(transparent 44%, rgb(255 244 214 / 0.95) 44% 56%, transparent 56%),
-    linear-gradient(90deg, transparent 44%, rgb(255 244 214 / 0.95) 44% 56%, transparent 56%),
-    radial-gradient(circle, #fffaf0 0 14%, rgb(255 214 170 / 0.5) 26%, transparent 62%);
+    linear-gradient(transparent 44%, color-mix(in srgb, var(--fx-fff4d6) 95%, transparent) 44% 56%, transparent 56%),
+    linear-gradient(90deg, transparent 44%, color-mix(in srgb, var(--fx-fff4d6) 95%, transparent) 44% 56%, transparent 56%),
+    radial-gradient(circle, var(--fx-fffaf0) 0 14%, color-mix(in srgb, var(--fx-ffd6aa) 50%, transparent) 26%, transparent 62%);
 }
 
 /* A meteor: a streak whose bright head leads (the transform origin). */
@@ -1565,8 +1614,8 @@ button {
   height: 2px;
   border-radius: 2px;
   transform-origin: 100% 50%;
-  background: linear-gradient(90deg, transparent, rgb(220 230 255 / 0.5) 60%, #fff);
-  box-shadow: 0 0 6px rgb(200 215 255 / 0.6);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fx-dce6ff) 50%, transparent) 60%, var(--fx-white));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--fx-c8d7ff) 60%, transparent);
 }
 
 /* A shaft of sun, hung from above the top edge. */
@@ -1575,7 +1624,7 @@ button {
   width: var(--ray-w, 10vmax);
   height: 170vh;
   transform-origin: 50% 0;
-  background: linear-gradient(to bottom, rgb(255 246 205 / 0.5), rgb(255 246 205 / 0.14) 55%, transparent 85%);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--fx-fff6cd) 50%, transparent), color-mix(in srgb, var(--fx-fff6cd) 14%, transparent) 55%, transparent 85%);
 }
 
 /* Shadows cast from above by something passing between the sun and the
@@ -1584,11 +1633,11 @@ button {
 .ev-fish {
   margin: -20px 0 0 -30px;
   opacity: 0.14;
-  color: #1e2a16;
+  color: var(--fx-1e2a16);
 }
 
 .ev-fish {
-  color: #083a44;
+  color: var(--fx-083a44);
   opacity: 0.18;
 }
 
@@ -1666,9 +1715,9 @@ button {
   width: 80vmax;
   height: 50vmax;
   background:
-    radial-gradient(40% 45% at 35% 50%, rgb(34 52 24 / 0.16), transparent 70%),
-    radial-gradient(35% 40% at 62% 42%, rgb(34 52 24 / 0.14), transparent 70%),
-    radial-gradient(30% 35% at 55% 64%, rgb(34 52 24 / 0.12), transparent 70%);
+    radial-gradient(40% 45% at 35% 50%, color-mix(in srgb, var(--fx-223418) 16%, transparent), transparent 70%),
+    radial-gradient(35% 40% at 62% 42%, color-mix(in srgb, var(--fx-223418) 14%, transparent), transparent 70%),
+    radial-gradient(30% 35% at 55% 64%, color-mix(in srgb, var(--fx-223418) 12%, transparent), transparent 70%);
 }
 
 /* A dandelion seed: a white puff of fine spokes. */
@@ -1677,10 +1726,10 @@ button {
   height: 14px;
   border-radius: 50%;
   background:
-    radial-gradient(circle, #fff 0 12%, transparent 16%),
-    repeating-conic-gradient(rgb(255 255 255 / 0.85) 0 5deg, transparent 5deg 30deg);
-  -webkit-mask: radial-gradient(circle, #000 35%, transparent 70%);
-  mask: radial-gradient(circle, #000 35%, transparent 70%);
+    radial-gradient(circle, var(--fx-white) 0 12%, transparent 16%),
+    repeating-conic-gradient(color-mix(in srgb, var(--fx-white) 85%, transparent) 0 5deg, transparent 5deg 30deg);
+  -webkit-mask: radial-gradient(circle, var(--fx-black) 35%, transparent 70%);
+  mask: radial-gradient(circle, var(--fx-black) 35%, transparent 70%);
 }
 
 /* The low sun's flare, top left, with a faint ring. */
@@ -1691,8 +1740,8 @@ button {
   height: 60vmax;
   border-radius: 50%;
   background:
-    radial-gradient(circle, rgb(255 226 170 / 0.55), rgb(255 190 130 / 0.2) 35%, transparent 62%),
-    radial-gradient(circle, transparent 64%, rgb(255 220 180 / 0.18) 66%, transparent 69%);
+    radial-gradient(circle, color-mix(in srgb, var(--fx-ffe2aa) 55%, transparent), color-mix(in srgb, var(--fx-ffbe82) 20%, transparent) 35%, transparent 62%),
+    radial-gradient(circle, transparent 64%, color-mix(in srgb, var(--fx-ffdcb4) 18%, transparent) 66%, transparent 69%);
 }
 
 /* A streak of blown sand. */
@@ -1700,7 +1749,7 @@ button {
   width: var(--len, 60px);
   height: 1.5px;
   border-radius: 2px;
-  background: linear-gradient(90deg, transparent, rgb(255 236 210 / 0.85));
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fx-ffecd2) 85%, transparent));
 }
 
 /* Candlelight bokeh: a soft disc, brighter at the rim like a real lens. */
@@ -1709,7 +1758,7 @@ button {
   height: var(--size, 60px);
   margin: calc(var(--size, 60px) / -2) 0 0 calc(var(--size, 60px) / -2);
   border-radius: 50%;
-  background: radial-gradient(circle, rgb(255 214 196 / 0.28), rgb(255 190 206 / 0.18) 62%, rgb(255 236 220 / 0.3) 70%, transparent 72%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--fx-ffd6c4) 28%, transparent), color-mix(in srgb, var(--fx-ffbece) 18%, transparent) 62%, color-mix(in srgb, var(--fx-ffecdc) 30%, transparent) 70%, transparent 72%);
 }
 
 .life-bit svg {
@@ -2516,7 +2565,7 @@ button {
   height: calc(var(--die) * 0.16);
   border-radius: 50%;
   background: var(--die-pip, var(--color-pip));
-  box-shadow: inset 0 calc(var(--die) * -0.01) calc(var(--die) * 0.014) rgb(0 0 0 / 0.28);
+  box-shadow: inset 0 calc(var(--die) * -0.01) calc(var(--die) * 0.014) color-mix(in srgb, var(--fx-black) 28%, transparent);
 }
 
 .dice-shadow {
